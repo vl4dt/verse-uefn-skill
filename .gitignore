@@ -8,3 +8,11 @@ desktop.ini
 .idea/
 *.swp
 *.swo
+
+# npm (local installs only — not committed)
+node_modules/
+package-lock.json
+.npm/
+
+# Build artifacts
+*.tgz
