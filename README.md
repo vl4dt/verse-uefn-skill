@@ -1,6 +1,6 @@
 # verse-uefn-skill
 
-Pi agent skill for **Epic Games' Verse** programming language and **UEFN** (Unreal Editor for Fortnite) development. Covers Verse syntax, types, failable expressions, effects, concurrency, `creative_device`/NPC patterns, multiplayer, persistence, and `@editable` properties.
+Pi agent skill for **Epic Games Verse** and **UEFN** (Unreal Editor for Fortnite) development. It is designed to guide agents that work with VS Code, Epic's Verse extension, and the UEFN MCP server.
 
 ## Installation
 
@@ -11,7 +11,7 @@ Pi agent skill for **Epic Games' Verse** programming language and **UEFN** (Unre
 pi install npm:@vl4dt/verse-uefn-skill
 
 # From git (works now)
-pi install git:github.com/vl4dt/verse-uefn-skill@v1.0.0
+pi install git:github.com/vl4dt/verse-uefn-skill@v1.1.0
 
 # From a local clone
 git clone https://github.com/vl4dt/verse-uefn-skill.git && cd verse-uefn-skill
@@ -37,20 +37,31 @@ git clone https://github.com/vl4dt/verse-uefn-skill.git
 
 | File | Purpose |
 |------|---------|
-| `SKILL.md` | Main skill instructions — language cheat sheet, workflows, best practices |
+| `SKILL.md` | Main skill instructions: UEFN workflow, MCP tool map, Verse/Python boundaries |
 | `REFERENCE.md` | Comprehensive Verse language reference (types, effects, failure, concurrency, patterns) |
-| `EXAMPLES.md` | 12 working code examples (devices, game manager, scoring, rounds, inventory, NPC, etc.) |
+| `EXAMPLES.md` | Conservative examples and MCP-assisted edit loop |
 
 ## Skill contents
 
-- **Verse language fundamentals** — immutability, mutability, type inference, failable expressions
-- **Effect system** — `<computes>`, `<reads>`, `<writes>`, `<transacts>`, `<decides>`, `<suspends>`
-- **Failure & speculative execution** — first-class failure control flow with auto-rollback
-- **Structured concurrency** — `sync:`, `race:`, `rush:`, `branch:`
-- **UEFN device development** — `creative_device`, `@editable` properties, lifecycle hooks
-- **Multiplayer patterns** — player lifecycle, safe references, server/client prediction
-- **Persistence** — `<persistable>` types, save/load with versioning best practices
-- **NPC behavior** — custom AI agents extending `creative_npc_agent`
+- **UEFN agent workflow**: inspect project context, edit narrowly, validate with diagnostics
+- **MCP integration**: `uefn_get_project_context`, Verse file tools, diagnostics, editor state
+- **Verse/Python boundary**: Verse for runtime gameplay, Python for editor automation
+- **Verse fundamentals**: immutability, mutability, failable expressions, effects, concurrency
+- **UEFN device development**: `creative_device`, `@editable` properties, lifecycle hooks
+- **Safety guidance**: avoid invented APIs; prefer Epic templates and compiler diagnostics
+
+## Recommended architecture
+
+```text
+Pi / Codex / VS Code local model
+  -> verse-uefn skill
+  -> UEFN MCP server
+      -> Verse workspace tools
+      -> UEFN editor HTTP listener
+          -> Unreal Python API
+```
+
+The skill tells the agent how to behave. The MCP server gives it structured access to the project and editor. Epic's VS Code Verse extension remains the source of truth for language support and diagnostics.
 
 ## Contributing
 

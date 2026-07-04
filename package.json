@@ -1,7 +1,7 @@
 {
   "name": "@vl4dt/verse-uefn-skill",
-  "version": "1.0.0",
-  "description": "Pi agent skill for Epic Games' Verse programming language and UEFN (Unreal Editor for Fortnite) development. Covers Verse syntax, types, failable expressions, effects, concurrency, creative_device/NPC patterns, multiplayer, persistence, and @editable properties.",
+  "version": "1.1.0",
+  "description": "Pi agent skill for Epic Games Verse and UEFN workflows, including VS Code, Epic Verse diagnostics, and MCP-assisted project context.",
   "keywords": [
     "pi-package",
     "pi-skill",
@@ -10,7 +10,9 @@
     "fortnite",
     "creative-2",
     "unreal-engine",
-    "epic-games"
+    "epic-games",
+    "mcp",
+    "vscode"
   ],
   "license": "MIT",
   "author": "vl4dt",

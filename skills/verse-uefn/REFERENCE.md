@@ -458,95 +458,47 @@ OnButtonPressed(Agent:agent):void =
 ```
 
 ### NPC behavior
-Custom AI for NPCs:
+Start NPC work from Epic's current UEFN NPC Behavior template in Verse Explorer. NPC APIs are version-sensitive, so preserve generated imports and base classes and validate each change with Verse diagnostics.
 
-```verse
-using { /Fortnite.com/NPC }
-
-my_npc := class(creative_npc_agent):
-    OnBegin<override>()<suspends>:void =
-        # Custom initialization
-        MoveTo(GetRandomLocation(), 5.0)
-```
-
-### game_instance access
-Access the global game state:
-
-```verse
-Game := GetGameContext()<>.GetGameInstance()
-Players := Game.GetPlayers()
-```
+Avoid hand-writing broad NPC base classes or movement APIs unless they are already present in the project or confirmed in Epic's current API reference.
 
 ## Multiplayer Patterns
 
 ### Player lifecycle
-```verse
-game_manager := class(creative_device):
-    var ActivePlayers:map<int, player> = map{}
+Player lifecycle APIs vary by device and UEFN version. Prefer events exposed by the devices already placed in the project, and inspect existing Verse files before adding new lifecycle hooks.
 
-    OnBegin<override>()<suspends>:void =
-        GetGameContext()<>.GetGameInstance().PlayerJoinedEvent.Subscribe(Self.OnPlayerJoined)
-        GetGameContext()<>.GetGameInstance().PlayerLeftEvent.Subscribe(Self.OnPlayerLeft)
-
-    OnPlayerJoined(Agent:agent):void =
-        if (Player := player[Agent]):
-            ActivePlayers[Player.GetPlayerIndex()] = Player
-            Print("Player joined: {Player}")
-
-    OnPlayerLeft(Agent:agent):void =
-        if (Player := player[Agent]):
-            Index := Player.GetPlayerIndex()
-            del ActivePlayers[Index]  # Remove from map
-            Print("Player left: {Player}")
-```
+When an MCP server is available, read project code with `verse_list_files` and `verse_read_file` before proposing multiplayer changes.
 
 ### Safe player reference handling
 ```verse
-# Always validate before use
-if (Player := ActivePlayers[PlayerIndex]):
-    Player.SetHealth(100)
-else:
-    Print("Player not found or already left")
-
-# Never assume a player reference is still valid
-# Players can leave between checks
+HandleAgent(Agent : agent):void =
+    if (Player := player[Agent]):
+        Print("Validated player reference")
+    else:
+        Print("Agent is not a player")
 ```
 
-### Server vs client prediction
-- Use `<predicts>` for functions that run on both client and server
-- Client-predicted operations must be deterministic
-- Server-authoritative state should use `<transacts>` on the server
+Never assume direct player mutation methods are available. Use current Fortnite device APIs and validate with diagnostics.
+
+### Authority and state
+- Keep authoritative gameplay state in one clear device or module.
+- Use effects required by the compiler; do not add speculative effects blindly.
+- Prefer simple state transitions that can be checked by UEFN diagnostics and playtesting.
 
 ## Persistence
 
 ### Persistable types
-Mark structs/classes with `<persistable>` to save/load:
+Persistable data is supported in UEFN, but exact storage APIs and constraints should come from Epic's current persistence docs and compiler diagnostics.
 
 ```verse
 player_save_data := struct<persistable>:
-    PlayerName:string = ""
     Level:int = 1
     XP:int = 0
-    Inventory:[]item_id = array{}
-```
-
-### Save/Load
-```verse
-SaveData():void =
-    Data := player_save_data{
-        PlayerName := Player.GetName(),
-        Level := CurrentLevel,
-        XP := CurrentXP
-    }
-    GetGameContext()<>.GetGameInstance().SaveGame(Data)
-
-LoadData()<decides>:player_save_data =
-    GetGameContext()<>.GetGameInstance().LoadGame[player_save_data{}]
 ```
 
 ### Best practices
 - Only mark truly persistent data as `<persistable>`
 - Provide sensible defaults for all fields
-- Handle load failures gracefully (failable `LoadGame`)
 - Version your save data format for backward compatibility
 - Avoid persisting device references or transient game state
+- Validate persistence code in UEFN before relying on it in production
