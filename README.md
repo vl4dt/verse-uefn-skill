@@ -4,14 +4,61 @@ Pi agent skill for **Epic Games Verse** and **UEFN** (Unreal Editor for Fortnite
 
 ## Installation
 
-### Pi (recommended)
+### VS Code Chat / GitHub Copilot
+
+VS Code Chat discovers Agent Skills from project and personal skill folders. The skill folder is the inner `skills/verse-uefn` directory that contains `SKILL.md`.
+
+#### Personal install
+
+Use this when you want the skill available in every VS Code workspace:
+
+```powershell
+git clone https://github.com/vl4dt/verse-uefn-skill.git "$env:USERPROFILE\verse-uefn-skill"
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.copilot\skills"
+New-Item -ItemType Junction `
+  -Path "$env:USERPROFILE\.copilot\skills\verse-uefn" `
+  -Target "$env:USERPROFILE\verse-uefn-skill\skills\verse-uefn"
+```
+
+If you already have this repo cloned locally:
+
+```powershell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.copilot\skills"
+New-Item -ItemType Junction `
+  -Path "$env:USERPROFILE\.copilot\skills\verse-uefn" `
+  -Target "D:\Lab\StudioTun\skills\verse-uefn\skills\verse-uefn"
+```
+
+#### Workspace install
+
+Use this when you want the skill committed or shared with one UEFN workspace:
+
+```powershell
+Set-Location D:\Path\To\YourUefnProject
+New-Item -ItemType Directory -Force ".github\skills"
+Copy-Item `
+  -Recurse `
+  -Force `
+  "D:\Lab\StudioTun\skills\verse-uefn\skills\verse-uefn" `
+  ".github\skills\verse-uefn"
+```
+
+Restart VS Code, open Chat, type `/`, and verify `verse-uefn` appears. You can also run **Chat: Open Customizations** from the Command Palette and check the Skills tab.
+
+Recommended prompt:
+
+```text
+Use the verse-uefn skill. Use the UEFN MCP server to inspect project context before editing Verse files.
+```
+
+### Pi
 
 ```bash
 # From npm (once published)
 pi install npm:@vl4dt/verse-uefn-skill
 
-# From git (works now)
-pi install git:github.com/vl4dt/verse-uefn-skill@v1.1.0
+# From git
+pi install git:github.com/vl4dt/verse-uefn-skill
 
 # From a local clone
 git clone https://github.com/vl4dt/verse-uefn-skill.git && cd verse-uefn-skill
@@ -53,7 +100,7 @@ git clone https://github.com/vl4dt/verse-uefn-skill.git
 ## Recommended architecture
 
 ```text
-Pi / Codex / VS Code local model
+VS Code Chat / Claude Code / Codex / Pi / local model
   -> verse-uefn skill
   -> UEFN MCP server
       -> Verse workspace tools
